@@ -26,3 +26,13 @@ jobs:
     - name: Build and push Docker images with Docker Compose
       run: |
         docker compose -f compose.yaml build
+
+    - name: Export Docker image
+      run: |
+        docker save $(docker compose config --services | head -1) > ${{ runner.temp }}/composed-image.tar
+    
+    - name: Upload Docker image as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: composed-docker-image
+        path: ${{ runner.temp }}/composed-image.tar
