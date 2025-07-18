@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
