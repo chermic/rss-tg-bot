@@ -25,4 +25,4 @@ jobs:
 
     - name: Build and push Docker images with Docker Compose
       run: |
-        docker-compose -f compose.yaml build
+        docker compose -f compose.yaml build
