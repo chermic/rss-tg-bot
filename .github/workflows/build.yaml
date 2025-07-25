@@ -11,50 +11,50 @@ jobs:
     environment: build
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx (for advanced building features)
-      uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx (for advanced building features)
+        uses: docker/setup-buildx-action@v3
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: Extract Docker image metadata
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: ${{ secrets.DOCKERHUB_USERNAME }}/rss-parser-tg-bot
+      - name: Extract Docker image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/rss-parser-tg-bot
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
-    - name: Build and push Docker images with Docker Compose
-      run: |
-        docker compose -f compose.yaml build
+      - name: Build and push Docker images with Docker Compose
+        run: |
+          docker compose -f compose.yaml build
 
-    - name: Upload with SCP
-      uses: appleboy/scp-action@v1
-      with:
-        username:  ${{ secrets.PRODUCTION_SERVER_USERNAME }}
-        key:       ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
-        host:      ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
-        port:      ${{ secrets.PRODUCTION_SERVER_PORT }}
-        source:    "compose.yaml"
-        target:    "."
-        strip_components: 1
+      - name: Upload with SCP
+        uses: appleboy/scp-action@v1
+        with:
+          username: ${{ secrets.PRODUCTION_SERVER_USERNAME }}
+          password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
+          host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
+          port: ${{ secrets.PRODUCTION_SERVER_PORT }}
+          source: "compose.yaml"
+          target: "."
+          strip_components: 1
 
-    - name: Execute remote SSH commands using password
-      uses: appleboy/ssh-action@v1
-      with:
+      - name: Execute remote SSH commands using password
+        uses: appleboy/ssh-action@v1
+        with:
           host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
           username: ${{ secrets.PRODUCTION_SERVER_USERNAME }}
           password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
@@ -63,4 +63,3 @@ jobs:
             touch .env
             echo ${{ secrets.TELEGRAM_BOT_TOKEN }} >> .touch
             docker compose up
-
