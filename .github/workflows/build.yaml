@@ -5,6 +5,8 @@ on:
     branches:
       - master
 
+env:
+  APP_PATH: /home/${{ secrets.PRODUCTION_SERVER_USERNAME }}/${{ vars.APP_DIR_NAME }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,6 +46,17 @@ jobs:
       - name: Check compose.yaml exists
         run: ls -l compose.yaml
 
+      - name: Create application directory
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
+          username: ${{ secrets.PRODUCTION_SERVER_USERNAME }}
+          password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
+          port: ${{ secrets.PRODUCTION_SERVER_PORT }}
+          script: |
+            set -e
+            mkdir -p ${{ env.APP_PATH }}
+
       - name: Upload compose.yaml with SCP
         uses: appleboy/scp-action@v1
         with:
@@ -52,7 +65,17 @@ jobs:
           host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
           port: ${{ secrets.PRODUCTION_SERVER_PORT }}
           source: "compose.yaml"
-          target: "/home/${{ secrets.PRODUCTION_SERVER_USERNAME }}/compose.yaml"
+          target: "${{ env.APP_PATH }}/"
+
+      - name: Check compose.yaml on server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
+          username: ${{ secrets.PRODUCTION_SERVER_USERNAME }}
+          password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
+          port: ${{ secrets.PRODUCTION_SERVER_PORT }}
+          script: |
+            test -f ${{ env.APP_PATH }}/compose.yaml
 
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@v1
@@ -62,12 +85,8 @@ jobs:
           password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
           port: ${{ secrets.PRODUCTION_SERVER_PORT }}
           script: |
-            # Create .env file if it doesn't exist
-            touch .env
-            
-            # Add Telegram bot token to .env file
-            echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
-            
-            # Pull latest images and restart containers
+            set -e
+            cd ${{ env.APP_PATH }}
+            echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
             docker compose pull
             docker compose up -d
