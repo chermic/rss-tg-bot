@@ -41,7 +41,10 @@ jobs:
         run: |
           docker compose -f compose.yaml build
 
-      - name: Upload with SCP
+      - name: Check compose.yaml exists
+        run: ls -l compose.yaml
+
+      - name: Upload compose.yaml with SCP
         uses: appleboy/scp-action@v1
         with:
           username: ${{ secrets.PRODUCTION_SERVER_USERNAME }}
@@ -49,9 +52,9 @@ jobs:
           host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
           port: ${{ secrets.PRODUCTION_SERVER_PORT }}
           source: "compose.yaml"
-          target: "~/compose.yaml"
+          target: "/home/${{ secrets.PRODUCTION_SERVER_USERNAME }}/compose.yaml"
 
-      - name: Execute remote SSH commands using password
+      - name: Execute remote SSH commands
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
@@ -59,6 +62,12 @@ jobs:
           password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
           port: ${{ secrets.PRODUCTION_SERVER_PORT }}
           script: |
+            # Create .env file if it doesn't exist
             touch .env
-            echo ${{ secrets.TELEGRAM_BOT_TOKEN }} >> .touch
-            docker compose up
+            
+            # Add Telegram bot token to .env file
+            echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> .env
+            
+            # Pull latest images and restart containers
+            docker compose pull
+            docker compose up -d
