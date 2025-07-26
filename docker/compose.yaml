@@ -1,7 +1,7 @@
 name: rss-parser-tg-bot
 services:
   app:
-    build: .
+    build: ..
     env_file: .env
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}

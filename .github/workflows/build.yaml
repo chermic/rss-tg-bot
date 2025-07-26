@@ -41,10 +41,10 @@ jobs:
 
       - name: Build and push Docker images with Docker Compose
         run: |
-          docker compose -f compose.yaml build
+          docker compose -f docker/compose.yaml build
 
       - name: Check compose.yaml exists
-        run: ls -l compose.yaml
+        run: ls -l docker/compose.yaml
 
       - name: Create application directory
         uses: appleboy/ssh-action@v1
@@ -64,18 +64,8 @@ jobs:
           password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
           host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
           port: ${{ secrets.PRODUCTION_SERVER_PORT }}
-          source: "compose.yaml"
+          source: "docker"
           target: "${{ env.APP_PATH }}/"
-
-      - name: Check compose.yaml on server
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
-          username: ${{ secrets.PRODUCTION_SERVER_USERNAME }}
-          password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
-          port: ${{ secrets.PRODUCTION_SERVER_PORT }}
-          script: |
-            test -f ${{ env.APP_PATH }}/compose.yaml
 
       - name: Execute remote SSH commands
         uses: appleboy/ssh-action@v1
@@ -88,5 +78,5 @@ jobs:
             set -e
             cd ${{ env.APP_PATH }}
             echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
-            docker compose pull
-            docker compose up -d
+            docker compose -f docker/compose.yaml pull
+            docker compose -f docker/compose.yaml up -d
