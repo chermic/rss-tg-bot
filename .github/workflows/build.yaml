@@ -34,14 +34,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./docker
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build and push Docker images with Docker Compose
-        run: |
-          docker compose -f docker/compose.yaml build
 
       - name: Check compose.yaml exists
         run: ls -l docker/compose.yaml
@@ -78,5 +74,5 @@ jobs:
             set -e
             cd ${{ env.APP_PATH }}
             echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
-            docker compose -f docker/compose.yaml pull
-            docker compose -f docker/compose.yaml up -d
+            docker compose pull
+            docker compose up -d
