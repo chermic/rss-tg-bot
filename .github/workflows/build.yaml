@@ -50,7 +50,6 @@ jobs:
           port: ${{ secrets.PRODUCTION_SERVER_PORT }}
           source: "compose.yaml"
           target: "~/"
-          strip_components: 1
 
       - name: Execute remote SSH commands using password
         uses: appleboy/ssh-action@v1
