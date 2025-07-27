@@ -1,7 +1,7 @@
 services:
   app:
     extends:
-      file: docker-compose.yaml
+      file: compose.yaml
       service: app
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
