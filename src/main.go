@@ -50,17 +50,35 @@ func parseFeed(rssFeed RSSFeed) (string, error) {
 	return resultMessage, nil
 }
 
-func main() {
-	_, exist := os.LookupEnv(tokenVariableName)
-	fmt.Printf("exist: %v\n", exist)
-
-	if !exist {
-		err := godotenv.Load()
-
+func initEnvAndCheckToken() error {
+	if _, exist := os.LookupEnv(tokenVariableName); !exist {
+		entries, err := os.ReadDir(".")
 		if err != nil {
-			log.Panic(fmt.Errorf(".env file load error: %w", err))
+			return fmt.Errorf("error while reading directory: %w", err)
 		}
 
+		for _, entry := range entries {
+			fmt.Println(entry.Name())
+		}
+
+		err = godotenv.Load("../.env")
+		if err != nil {
+			return fmt.Errorf(".env file load error: %w", err)
+		}
+
+		_, exist = os.LookupEnv(tokenVariableName)
+		if !exist {
+			return fmt.Errorf("token variable %s not found in .env file", tokenVariableName)
+		}
+	}
+
+	return nil
+}
+
+func main() {
+	err := initEnvAndCheckToken()
+	if err != nil {
+		log.Panic(err)
 	}
 
 	pref := telebot.Settings{
