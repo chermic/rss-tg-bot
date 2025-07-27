@@ -31,13 +31,18 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/rss-parser-tg-bot
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      # - name: Build and push Docker image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: .
+      #     push: ${{ github.event_name != 'pull_request' }}
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push with Docker Compose
+        run: |
+          docker compose -f docker/compose.yaml build
+          docker compose -f docker/compose.yaml push
 
       - name: Check compose.yaml exists
         run: ls -l docker/compose.yaml
