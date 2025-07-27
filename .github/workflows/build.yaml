@@ -41,11 +41,11 @@ jobs:
 
       - name: Build and push with Docker Compose
         run: |
-          docker compose build
-          docker compose push
+          docker compose -f compose.prod.yaml build
+          docker compose -f compose.prod.yaml push
 
       - name: Check compose.yaml exists
-        run: ls -l docker/compose.yaml
+        run: ls -l compose.prod.yaml
 
       - name: Create application directory
         uses: appleboy/ssh-action@v1
@@ -78,6 +78,6 @@ jobs:
           script: |
             set -e
             cd ${{ env.APP_PATH }}
-            echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
+            # echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
             docker compose pull
-            docker compose up -d
+            TELERGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} docker compose up -d
