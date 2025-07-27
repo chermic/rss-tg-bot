@@ -40,6 +40,8 @@ jobs:
       #     labels: ${{ steps.meta.outputs.labels }}
 
       - name: Build and push with Docker Compose
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: |
           docker compose -f compose.prod.yaml build
           docker compose -f compose.prod.yaml push
@@ -75,9 +77,10 @@ jobs:
           username: ${{ secrets.PRODUCTION_SERVER_USERNAME }}
           password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
           port: ${{ secrets.PRODUCTION_SERVER_PORT }}
+          envs: TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
           script: |
             set -e
             cd ${{ env.APP_PATH }}
             # echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" > .env
             docker compose pull
-            TELERGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} docker compose up -d
+            docker compose up -d
