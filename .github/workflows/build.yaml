@@ -41,8 +41,8 @@ jobs:
 
       - name: Build and push with Docker Compose
         run: |
-          docker compose -f docker/compose.yaml build
-          docker compose -f docker/compose.yaml push
+          docker compose build
+          docker compose push
 
       - name: Check compose.yaml exists
         run: ls -l docker/compose.yaml
