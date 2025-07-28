@@ -16,31 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check secrets
-        run: |
-          echo "Checking if required secrets are set..."
-          if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
-            echo "ERROR: DOCKERHUB_USERNAME secret is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.PRODUCTION_SERVER_ADDRESS }}" ]; then
-            echo "ERROR: PRODUCTION_SERVER_ADDRESS secret is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.PRODUCTION_SERVER_USERNAME }}" ]; then
-            echo "ERROR: PRODUCTION_SERVER_USERNAME secret is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.PRODUCTION_SERVER_PASSWORD }}" ]; then
-            echo "ERROR: PRODUCTION_SERVER_PASSWORD secret is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.PRODUCTION_SERVER_PORT }}" ]; then
-            echo "ERROR: PRODUCTION_SERVER_PORT secret is not set"
-            exit 1
-          fi
-          echo "All required secrets are set"
-
       - name: Set up Docker Buildx (for advanced building features)
         uses: docker/setup-buildx-action@v3
 
