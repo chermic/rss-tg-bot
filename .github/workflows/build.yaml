@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  APP_PATH: /home/${{ secrets.PRODUCTION_SERVER_USERNAME }}/${{ vars.APP_DIR_NAME }}
+  APP_PATH: /home/${{ secrets.PRODUCTION_SERVER_USERNAME }}/rss-parser-tg-bot
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -68,7 +68,7 @@ jobs:
           password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
           host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
           port: ${{ secrets.PRODUCTION_SERVER_PORT }}
-          source: "docker"
+          source: "docker,compose.prod.yaml"
           target: "${{ env.APP_PATH }}/"
 
       - name: Execute remote SSH commands
