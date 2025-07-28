@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  APP_PATH: /home/${{ secrets.PRODUCTION_SERVER_USERNAME }}/rss-parser-tg-bot
+  APP_PATH: /home/${{ secrets.PRODUCTION_SERVER_USERNAME }}/rss-tg-bot
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/rss-parser-tg-bot
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/rss-tg-bot
 
       # - name: Build and push Docker image
       #   uses: docker/build-push-action@v6

@@ -1,4 +1,4 @@
-name: rss-parser-tg-bot
+name: rss-tg-bot
 services:
   app:
     build:

@@ -1,6 +1,6 @@
-ARG APP_DIR="/app"
+ARG APP_DIR="/rss-tg-bot"
 ARG DIST_DIR=${APP_DIR}/dist/
-ARG OUTPUT_FILE_NAME=main
+ARG OUTPUT_FILE_NAME=app
 
 FROM golang:1.25rc2 AS build
 
@@ -14,7 +14,7 @@ COPY go.mod go.sum ./
 
 RUN go mod download
 
-COPY src/*.go .
+COPY src/*.go ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o $OUTPUT_FILE_NAME
 
@@ -35,5 +35,3 @@ RUN touch /var/log/cron.log
 COPY --from=build ${APP_DIR}/${OUTPUT_FILE_NAME} ${DIST_DIR}/${OUTPUT_FILE_NAME}
 
 CMD ["crond", "-f", "-d", "8"]
-
-# CMD ["./app"]

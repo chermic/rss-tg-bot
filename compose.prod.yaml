@@ -1,8 +1,5 @@
 services:
-  app:
-    extends:
-      file: compose.yaml
-      service: app
+  app:      
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-    image: ${DOCKERHUB_USERNAME}/rss-parser-tg-bot
+    image: ${DOCKERHUB_USERNAME}/rss-tg-bot
