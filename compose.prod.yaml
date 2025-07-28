@@ -5,3 +5,4 @@ services:
       service: app
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+    image: ${DOCKERHUB_USERNAME}/rss-parser-tg-bot

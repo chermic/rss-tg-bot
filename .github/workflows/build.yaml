@@ -42,8 +42,8 @@ jobs:
       - name: Build and push with Docker Compose
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          echo $TELEGRAM_BOT_TOKEN
           docker compose -f compose.prod.yaml build
           docker compose -f compose.prod.yaml push
 
