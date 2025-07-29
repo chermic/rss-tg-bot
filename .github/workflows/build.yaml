@@ -72,6 +72,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         with:
           host: ${{ secrets.PRODUCTION_SERVER_ADDRESS }}
           username: ${{ secrets.PRODUCTION_SERVER_USERNAME }}
