@@ -47,6 +47,7 @@ func parseFeed(rssFeed RSSFeed) (string, error) {
 		// items = append(items, messageItem)
 	}
 
+	fmt.Printf("resultMessage: %v\n", resultMessage)
 	return resultMessage, nil
 }
 
