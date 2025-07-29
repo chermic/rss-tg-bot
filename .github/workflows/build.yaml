@@ -45,7 +45,7 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
           docker compose -f compose.yaml build
-          docker compose -f compose.yaml push rss-tg-bot
+          docker compose -f compose.yaml push
 
       - name: Create application directory
         uses: appleboy/ssh-action@v1
