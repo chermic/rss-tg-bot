@@ -78,7 +78,7 @@ jobs:
           username: ${{ secrets.PRODUCTION_SERVER_USERNAME }}
           password: ${{ secrets.PRODUCTION_SERVER_PASSWORD }}
           port: ${{ secrets.PRODUCTION_SERVER_PORT }}
-          envs: TELEGRAM_BOT_TOKEN
+          envs: TELEGRAM_BOT_TOKEN,DOCKERHUB_USERNAME
           script: |
             set -e
             cd ${{ env.APP_PATH }}
