@@ -7,3 +7,4 @@ services:
     env_file:
       - path: .env
         required: false
+    image: ${DOCKERHUB_USERNAME}/rss-tg-bot
