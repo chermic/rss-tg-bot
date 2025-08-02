@@ -2,4 +2,6 @@ services:
   app:      
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - RECIPIENTS=${RECIPIENTS}
+      - RSS_FEEDS=${RSS_FEEDS}
     image: ${DOCKERHUB_USERNAME}/rss-tg-bot
