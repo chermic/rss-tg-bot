@@ -1,4 +1,4 @@
-module it-weekly-news-tg-bot
+module rss-tg-bot
 
 go 1.24.4
 
