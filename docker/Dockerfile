@@ -28,8 +28,7 @@ WORKDIR ${APP_DIR}
 
 RUN apk add --no-cache busybox-suid
 
-RUN mkdir -p /etc/crontab/root
-COPY crontab.txt /etc/crontabs/root/crontab
+COPY crontab.txt /etc/crontabs/root
 RUN chmod 0644 /etc/crontabs/root
 RUN touch /var/log/cron.log
 
