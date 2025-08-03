@@ -35,5 +35,5 @@ RUN touch /var/log/cron.log
 
 COPY --from=build ${APP_DIR}/${OUTPUT_FILE_NAME} ${DIST_DIR}/${OUTPUT_FILE_NAME}
 
-CMD ["sh", "-c", "$DIST_DIR/app"]
-# CMD ["crond", "-f", "-d", "8"]
+# CMD ["sh", "-c", "$DIST_DIR/app"]
+CMD ["crond", "-f", "-d", "8"]
