@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	"github.com/joho/godotenv"
 	gofeed "github.com/mmcdole/gofeed"
-	"gopkg.in/telebot.v4"
 )
 
 var (
@@ -55,27 +53,31 @@ func parseFeed(rssLink string) (string, error) {
 	return resultMessage, nil
 }
 
-func initEnvAndCheckToken() error {
-	if _, exist := os.LookupEnv(tokenVariableName); !exist {
+func initEnvAndCheckToken() (*string, error) {
+	tokenValue, envVarExists := os.LookupEnv(tokenVariableName)
+	if !envVarExists {
+		if _, err := os.Stat(".env"); err == nil {
+			err := godotenv.Load(".env")
+			if err != nil {
+				return nil, fmt.Errorf(".env file load error: %w", err)
+			}
 
-		err := godotenv.Load(".env")
-		if err != nil {
-			return fmt.Errorf(".env file load error: %w", err)
-		}
-
-		_, exist = os.LookupEnv(tokenVariableName)
-		if !exist {
-			return fmt.Errorf("token variable %s not found in .env file", tokenVariableName)
+			tokenValue, envVarExists = os.LookupEnv(tokenVariableName)
+			if !envVarExists {
+				return nil, fmt.Errorf("token variable %s not found in .env file", tokenVariableName)
+			}
+		} else {
+			return nil, fmt.Errorf(".env file not found and token variable %s not set", tokenVariableName)
 		}
 	}
 
-	return nil
+	return &tokenValue, nil
 }
 
 func main() {
 	logger := NewLogger()
 
-	err := initEnvAndCheckToken()
+	token, err := initEnvAndCheckToken()
 	if err != nil {
 		logger.Error("Error initialize environment variables", "error", err)
 		os.Exit(1)
@@ -83,14 +85,7 @@ func main() {
 
 	logger.Debug("Environment variables successfully initialized")
 
-	pref := telebot.Settings{
-		Token:  GetEnvOrDefault(tokenVariableName, ""),
-		Poller: &telebot.LongPoller{Timeout: 10 * time.Second},
-	}
-
-	logger.Debug("Telebot preferences created")
-
-	bot, err := telebot.NewBot(pref)
+	bot, err := NewTelebot(*token)
 
 	if err != nil {
 		logger.Error("error while creating bot", "error", err)
@@ -147,11 +142,10 @@ func main() {
 			logger.Warn("Failed to fetch RSS Feed", "rssFeed", rssFeed)
 		} else {
 			logger.Debug("RSS Feed successfully fetched and handled", "rssFeed", rssFeed)
-			logger.Debug("RSS Feed result message", "rssFeedMessage", message)
 
 			logger.Debug("Start sending messages to recipients")
 			for _, recipient := range recipients {
-				bot.Send(telebot.ChatID(recipient), message)
+				bot.Send(recipient, message)
 			}
 			logger.Debug("Finish sending messages to recipients")
 		}

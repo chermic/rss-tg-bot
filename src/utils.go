@@ -36,14 +36,14 @@ func GetRssFeedsLinks() ([]string, error) {
 	return linksList, nil
 }
 
-func GetRecipients() ([]int32, error) {
+func GetRecipients() ([]int, error) {
 	recipientsIdsJson := GetEnvOrDefault("RECIPIENTS", "")
 
 	if len(recipientsIdsJson) == 0 {
 		return nil, errors.New("Can not find RECIPIENTS env")
 	}
 
-	var recipients []int32
+	var recipients []int
 	err := json.Unmarshal([]byte(recipientsIdsJson), &recipients)
 
 	if err != nil {
