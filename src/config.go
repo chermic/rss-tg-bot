@@ -127,3 +127,10 @@ func (c *Config) String() string {
 	return fmt.Sprintf("Config{RSSFeeds: %d, Recipients: %d, LogLevel: %s, RateLimit: %v, MaxRetries: %d, MaxItems: %d, MaxWorkers: %d}",
 		len(c.RSSFeeds), len(c.Recipients), c.LogLevel, c.RateLimit, c.MaxRetries, c.MaxItems, c.MaxWorkers)
 }
+
+// parseInt parses a string to int with error handling
+func parseInt(s string) (int, error) {
+	var i int
+	_, err := fmt.Sscanf(s, "%d", &i)
+	return i, err
+}
