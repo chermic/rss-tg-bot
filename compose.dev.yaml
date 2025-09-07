@@ -2,7 +2,10 @@ services:
   app:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.dev
+    container_name: rss-tg-bot-dev
     env_file:
       - path: .env
         required: true
+    volumes:
+      - ./db:/rss-tg-bot/db

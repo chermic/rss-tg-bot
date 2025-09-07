@@ -32,24 +32,35 @@ func getRssFeedsLinks() ([]string, error) {
 	return linksList, nil
 }
 
-func parseFeed(rssLink string) (string, error) {
+func parseFeed(rssLink string, db *Database) (string, error) {
 	fp := gofeed.NewParser()
 
 	feed, err := fp.ParseURL(rssLink)
 
 	if err != nil {
-		log.Println(fmt.Errorf("can not request %s: %w", rssLink, err))
-
 		return "", err
 	}
 
-	resultMessage := fmt.Sprintln(feed.Title)
+	resultMessage := ""
 
 	for _, item := range feed.Items {
+		hasLink, err := db.HasLink(item.Link)
+		if err != nil {
+			log.Printf("Error while checking if link is already in database: %v", err)
+		}
+
+		if hasLink {
+			continue
+		}
+
 		resultMessage += fmt.Sprintln(item.Title) + fmt.Sprintln(item.Link) + "\n"
+		db.AddLink(item.Link)
 	}
 
-	fmt.Printf("resultMessage: %v\n", resultMessage)
+	if len(resultMessage) > 0 {
+		resultMessage = fmt.Sprintln(feed.Title) + "\n" + resultMessage
+	}
+
 	return resultMessage, nil
 }
 
@@ -82,6 +93,12 @@ func main() {
 		logger.Error("Error initialize environment variables", "error", err)
 		os.Exit(1)
 	}
+
+	db, err := NewDatabase()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
 	logger.Debug("Environment variables successfully initialized")
 
@@ -136,7 +153,7 @@ func main() {
 	logger.Debug("Start fetching RSS Feeds")
 	for _, rssFeed := range rssFeeds {
 		logger.Debug("Fetching RSS Feed", "rssFeed", rssFeed)
-		message, err := parseFeed(rssFeed)
+		message, err := parseFeed(rssFeed, db)
 
 		if err != nil {
 			logger.Warn("Failed to fetch RSS Feed", "rssFeed", rssFeed)

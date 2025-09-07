@@ -27,6 +27,7 @@ func NewTelebot(token string) (*Telebot, error) {
 	return &_telebot, nil
 }
 
-func (telebot *Telebot) Send(id int, message string) {
-	telebot.bot.Send(tb.ChatID(id), message)
+func (telebot *Telebot) Send(id int, message string) error {
+	_, err := telebot.bot.Send(tb.ChatID(id), message)
+	return err
 }

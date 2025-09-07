@@ -5,3 +5,5 @@ services:
       - RECIPIENTS=${RECIPIENTS}
       - RSS_FEEDS=${RSS_FEEDS}
     image: ${DOCKERHUB_USERNAME}/rss-tg-bot
+    volumes:
+      - ./db:/rss-tg-bot/db

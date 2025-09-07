@@ -1,7 +1,0 @@
-name: rss-tg-bot
-services:
-  app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    image: ${DOCKERHUB_USERNAME}/rss-tg-bot
