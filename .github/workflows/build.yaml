@@ -44,8 +44,8 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
-          docker compose build
-          docker compose push
+          docker compose -f compose.build.yaml build
+          docker compose -f compose.build.yaml push
 
       - name: Create application directory
         uses: appleboy/ssh-action@v1
